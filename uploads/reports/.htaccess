@@ -1,0 +1,4 @@
+Options -ExecCGI
+RemoveHandler .php .phtml .php3 .phar
+AddType text/plain .php .phtml .php3 .phar
+Options -Indexes
