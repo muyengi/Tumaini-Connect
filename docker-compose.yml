@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_USER: tumaini
+      DB_PASS: tumaini_pass
+      DB_NAME: tumaini_connect_db
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/var/www/html/uploads
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass  # local development only — change in production
+      MYSQL_DATABASE: tumaini_connect_db
+      MYSQL_USER: tumaini
+      MYSQL_PASSWORD: tumaini_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/tumaini_connect_db.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
